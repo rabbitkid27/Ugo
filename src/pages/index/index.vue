@@ -1,6 +1,5 @@
 <template>
   <div class="index-container">
-    <!-- 搜索框区域 -->
     <div class="search-box">
       <input type="text" placeholder="搜索">
       <icon type="search" size="12"></icon>
@@ -34,10 +33,21 @@
         </div>
       </div>
     </div>
+    <!-- 底线 -->
+    <div class="bottom-line">
+      <i class="iconfont icon-xiao"></i>
+      我是有底线的
+    </div>
+    <!-- 返回顶部 -->
+    <div class="back-top" v-show="isShow" @click="toTop">
+      <i class="iconfont icon-jiantoushang"></i>
+      顶部
+    </div>
   </div>
 </template>
 
 <script>
+// 导入hxios模块
 import hxios from '../../utils/index.js'
 
 export default {
@@ -48,7 +58,9 @@ export default {
       // 分类按钮数组
       categoryList: [],
       // 楼层区域数组
-      floorList: []
+      floorList: [],
+      // 是否显示回到顶部
+      isShow: false
     }
   },
   // 初始化的时候 获取数据
@@ -84,11 +96,29 @@ export default {
       url: 'api/public/v1/home/floordata'
     })
     // 一次性发送所有的请求
-    let totalRes=await Promise.all([p1,p2,p3]);
-    
-    this.swiperList = totalRes[0].data.message;
-    this.categoryList = totalRes[1].data.message;
-    this.floorList = totalRes[2].data.message;
+    let totalRes = await Promise.all([p1, p2, p3])
+
+    this.swiperList = totalRes[0].data.message
+    this.categoryList = totalRes[1].data.message
+    this.floorList = totalRes[2].data.message
+  },
+  //滚动事件
+  onPageScroll(e) {
+    // console.log(e);
+    if (e.scrollTop > 170) {
+      this.isShow = true
+    } else {
+      this.isShow = false
+    }
+  },
+  methods: {
+    // 返回顶部
+    toTop() {
+      wx.pageScrollTo({
+        scrollTop: 0, //滚动到页面的目标位置（单位px）,
+        duration: 300 //滚动动画的时长，默认300ms，单位 ms,
+      })
+    }
   }
 }
 </script>
@@ -99,27 +129,30 @@ $uRed: #ff2d4a;
   padding-top: 100rpx;
 }
 .search-box {
-  background-color: $uRed;
+  background: $uRed;
   padding: 20rpx 16rpx;
   box-sizing: border-box;
+  position: fixed;
   left: 0;
   top: 0;
-  position: fixed;
   width: 100%;
+  z-index: 998;
   input {
     display: block;
     width: 100%;
     box-sizing: border-box;
     padding-left: 376rpx;
-    background-color: #ffffff;
+    background-color: white;
     font-size: 24rpx;
     height: 60rpx;
     border-radius: 10rpx;
   }
   icon {
     position: absolute;
+    // 父盒子
     left: 50%;
     top: 50%;
+    // 自己
     transform: translate(-50%, -50%);
   }
 }
@@ -139,7 +172,7 @@ $uRed: #ff2d4a;
 // 分类按钮区域
 .category-container {
   display: flex;
-  padding-top: 24px;
+  padding-top: 24rpx;
   padding: 29rpx;
   background-color: white;
   .item {
@@ -157,7 +190,8 @@ $uRed: #ff2d4a;
     }
   }
 }
-// 楼层区域
+
+// 楼层数据
 .floor-container {
   .floor {
     .top {
@@ -181,7 +215,7 @@ $uRed: #ff2d4a;
         top: 0;
         display: block;
         width: 100%;
-      }     
+      }
     }
     .bottom {
       padding: 20rpx 0 0 16rpx;
@@ -193,18 +227,39 @@ $uRed: #ff2d4a;
         width: 230rpx;
         height: 190rpx;
         margin-right: 10rpx;
-        &:first-child{
+        &:first-child {
           width: 230rpx;
           height: 390rpx;
         }
-        &:nth-child(2){
+        &:nth-child(2) {
           margin-bottom: 10rpx;
         }
-        &:nth-child(3){
+        &:nth-child(3) {
           margin-bottom: 10rpx;
         }
       }
     }
   }
 }
+// 底线
+.bottom-line {
+  display: flex;
+  justify-content: center;
+  color: #999999;
+  font-size: 24rpx;
+  margin-top: 20rpx;
+}
+// 返回顶部
+.back-top {
+  position: fixed;
+  bottom: 15rpx;
+  right: 15rpx;
+  text-align: center;
+  width: 90rpx;
+  height: 90rpx;
+  border-radius: 50%;
+  background: #ff7b94;
+  font-size: 26rpx;
+}
+</style>
 </style>
